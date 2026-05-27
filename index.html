@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0">
+  <title>Турнирная сетка до 30 команд</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #1e293b;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      color: #e2e8f0;
+    }
+    .container {
+      max-width: 1300px;
+      width: 100%;
+      background: #0f172a;
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8);
+      padding: 1.8rem 1.5rem 2.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    h1 {
+      text-align: center;
+      font-weight: 600;
+      font-size: 2.2rem;
+      letter-spacing: 1px;
+      color: #f1f5f9;
+      margin-bottom: 0.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    h1 span {
+      background: #facc15;
+      color: #0f172a;
+      padding: 0.2rem 1rem;
+      border-radius: 40px;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+    .settings-panel {
+      background: #1e293b;
+      border-radius: 2rem;
+      padding: 1.3rem 1.8rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .teams-count {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .teams-count label {
+      font-weight: 600;
+      color: #cbd5e1;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    select, input {
+      background: #0f172a;
+      border: 1px solid #475569;
+      border-radius: 2rem;
+      padding: 0.7rem 1.2rem;
+      color: #f1f5f9;
+      font-weight: 500;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+    select:hover, input:hover {
+      border-color: #facc15;
+    }
+    select:focus, input:focus {
+      border-color: #facc15;
+      box-shadow: 0 0 0 3px rgba(250,204,21,0.3);
+    }
+    .team-input-area {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.7rem;
+      flex: 1;
+    }
+    .team-input-area input {
+      flex: 2;
+      min-width: 200px;
+    }
+    .btn {
+      background: #facc15;
+      color: #0f172a;
+      font-weight: 700;
+      border: none;
+      border-radius: 2.5rem;
+      padding: 0.7rem 1.5rem;
+      font-size: 0.95rem;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.2s;
+      box-shadow: 0 4px 10px rgba(250,204,21,0.3);
+      white-space: nowrap;
+    }
+    .btn:hover {
+      background: #fbbf24;
+      box-shadow: 0 6px 18px rgba(250,204,21,0.5);
+      transform: translateY(-1px);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 2px solid #facc15;
+      color: #facc15;
+      box-shadow: none;
+    }
+    .btn-outline:hover {
+      background: rgba(250,204,21,0.1);
+    }
+    .bracket-container {
+      background: #0f172a;
+      border-radius: 2rem;
+      padding: 1.5rem 1rem;
+      overflow-x: auto;
+      overflow-y: visible;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      min-height: 320px;
+      border: 1px solid #334155;
+    }
+    .bracket {
+      display: flex;
+      gap: 2.5rem;
+      align-items: flex-start;
+      padding: 0.8rem 1rem;
+      min-width: max-content;
+      margin: 0 auto;
+    }
+    .round {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      gap: 1.2rem;
+      min-width: 170px;
+    }
+    .round-title {
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      margin-bottom: 0.2rem;
+      background: #1e293b;
+      padding: 0.3rem 0.5rem;
+      border-radius: 20px;
+    }
+    .match {
+      background: #1e293b;
+      border-radius: 1rem;
+      padding: 0.6rem 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      border: 1px solid #475569;
+      transition: 0.15s;
+      min-width: 150px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    }
+    .team-slot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #0f172a;
+      border-radius: 20px;
+      padding: 0.3rem 0.7rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      border: 1px solid transparent;
+    }
+    .team-name {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .winner-badge {
+      background: #facc15;
+      color: #0f172a;
+      border-radius: 20px;
+      padding: 0.1rem 0.6rem;
+      font-weight: 700;
+      font-size: 0.7rem;
+      margin-left: 6px;
+      text-transform: uppercase;
+    }
+    .select-winner-btn {
+      background: none;
+      border: 1px dashed #64748b;
+      color: #cbd5e1;
+      border-radius: 15px;
+      padding: 0.15rem 0.7rem;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-left: 4px;
+    }
+    .select-winner-btn:hover {
+      background: #facc15;
+      color: #0f172a;
+      border-color: #facc15;
+      font-weight: bold;
+    }
+    .match-winner {
+      border: 2px solid #facc15;
+      background: #2d3b4f;
+    }
+    .empty-slot {
+      color: #64748b;
+      font-style: italic;
+    }
+    .footer-note {
+      margin-top: 0.8rem;
+      color: #64748b;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    @media (max-width: 700px) {
+      .settings-panel {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+      }
+      .team-input-area {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>
+    🏆 ТУРНИРНАЯ СЕТКА
+    <span id="teamCountDisplay">16</span>
+  </h1>
+
+  <div class="settings-panel">
+    <div class="teams-count">
+      <label>⚙️ Число команд:</label>
+      <select id="teamCountSelect">
+        <option value="4">4</option>
+        <option value="8">8</option>
+        <option value="16" selected>16</option>
+        <option value="24">24</option>
+        <option value="30">30</option>
+      </select>
+    </div>
+    <div class="team-input-area">
+      <input type="text" id="newTeamNameInput" placeholder="Название команды" maxlength="30" />
+      <button class="btn" id="addTeamBtn">➕ Добавить</button>
+      <button class="btn btn-outline" id="resetDefaultBtn">🔄 Сбросить названия</button>
+    </div>
+    <button class="btn" id="generateBracketBtn">📋 Обновить сетку</button>
+  </div>
+
+  <div class="bracket-container" id="bracketContainer">
+    <div class="bracket" id="bracketRoot"></div>
+  </div>
+  <div class="footer-note">
+    💡 Нажмите на кнопку рядом с командой, чтобы выбрать победителя матча.
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ----- СОСТОЯНИЕ -----
+    let teamNames = [];               // массив названий команд (индекс 0..N-1)
+    let currentTeamCount = 16;       // выбранное количество команд
+    let winners = new Map();         // ключ: "round-index-matchIndex" -> название победителя
+
+    // ----- ЭЛЕМЕНТЫ DOM -----
+    const teamCountSelect = document.getElementById('teamCountSelect');
+    const teamCountDisplay = document.getElementById('teamCountDisplay');
+    const newTeamNameInput = document.getElementById('newTeamNameInput');
+    const addTeamBtn = document.getElementById('addTeamBtn');
+    const resetDefaultBtn = document.getElementById('resetDefaultBtn');
+    const generateBracketBtn = document.getElementById('generateBracketBtn');
+    const bracketRoot = document.getElementById('bracketRoot');
+
+    // ----- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ -----
+    function getDefaultTeamNames(count) {
+      const names = [];
+      for (let i = 1; i <= count; i++) {
+        names.push(`Команда ${i}`);
+      }
+      return names;
+    }
+
+    // Синхронизация teamNames с текущим количеством
+    function syncTeamNamesToCount(newCount) {
+      const oldNames = [...teamNames];
+      // Если массив пустой или длина не совпадает – заполняем дефолтными
+      if (oldNames.length !== newCount) {
+        const defaultNames = getDefaultTeamNames(newCount);
+        // сохраняем существующие имена там, где индексы совпадают
+        const updatedNames = [];
+        for (let i = 0; i < newCount; i++) {
+          if (i < oldNames.length && oldNames[i] && oldNames[i].trim() !== '') {
+            updatedNames.push(oldNames[i]);
+          } else {
+            updatedNames.push(defaultNames[i]);
+          }
+        }
+        teamNames = updatedNames;
+      }
+      // если длина совпадает, но массив пустой (редкий случай) – тоже заполним
+      if (teamNames.length === 0) {
+        teamNames = getDefaultTeamNames(newCount);
+      }
+      // гарантируем, что длина точно newCount
+      if (teamNames.length !== newCount) {
+        teamNames = getDefaultTeamNames(newCount);
+      }
+    }
+
+    // Обновить UI (отображение количества)
+    function updateCountDisplay() {
+      teamCountDisplay.textContent = currentTeamCount;
+    }
+
+    // Инициализация или сброс winners для новой сетки
+    function resetWinners() {
+      winners.clear();
+    }
+
+    // Получить общее количество раундов (включая финал) для числа команд
+    function getTotalRounds(teamCount) {
+      if (teamCount <= 1) return 0;
+      // Для чисел не кратных степени 2 используем ceil(log2), но плей-офф строится через предварительные раунды
+      let pow = 1;
+      let rounds = 0;
+      while (pow < teamCount) {
+        pow *= 2;
+        rounds++;
+      }
+      return rounds;
+    }
+
+    // Построение структуры раундов: массив раундов, каждый раунд – массив матчей.
+    // Матч: { teamA: string or null, teamB: string or null, matchIndex: number, roundIndex: number }
+    function buildBracketStructure(teamCount, names) {
+      if (!names || names.length !== teamCount) {
+        names = getDefaultTeamNames(teamCount);
+      }
+      const totalRounds = getTotalRounds(teamCount);
+      if (totalRounds === 0) return [];
+
+      const rounds = [];
+      // Определяем размер первого раунда (степень двойки >= teamCount)
+      let firstRoundSize = 1;
+      while (firstRoundSize < teamCount) firstRoundSize *= 2;
+      
+      // Количество матчей в первом раунде = firstRoundSize / 2
+      const firstRoundMatches = firstRoundSize / 2;
+      
+      // Создаём массив участников первого раунда (с учетом bye, если teamCount < firstRoundSize)
+      const participants = [...names];
+      // Добавляем пустые места (bye), чтобы длина стала firstRoundSize
+      while (participants.length < firstRoundSize) {
+        participants.push(null); // null означает автоматический проход
+      }
+
+      // Раунд 0 (первый)
+      const round0Matches = [];
+      for (let i = 0; i < firstRoundMatches; i++) {
+        const teamA = participants[2 * i];
+        const teamB = participants[2 * i + 1];
+        round0Matches.push({
+          teamA: teamA,
+          teamB: teamB,
+          matchIndex: i,
+          roundIndex: 0
+        });
+      }
+      rounds.push(round0Matches);
+
+      // Последующие раунды
+      for (let r = 1; r < totalRounds; r++) {
+        const prevMatchesCount = rounds[r-1].length;
+        const currentMatches = [];
+        for (let m = 0; m < prevMatchesCount / 2; m++) {
+          currentMatches.push({
+            teamA: null,  // будет определено победителем
+            teamB: null,
+            matchIndex: m,
+            roundIndex: r
+          });
+        }
+        rounds.push(currentMatches);
+      }
+      return rounds;
+    }
+
+    // Определение победителя матча по сохранённым данным
+    function getWinnerForMatch(roundIndex, matchIndex, matchTeamA, matchTeamB) {
+      const key = `${roundIndex}-${matchIndex}`;
+      if (winners.has(key)) {
+        return winners.get(key);
+      }
+      // Автоматический победитель, если один из участников null
+      if (matchTeamA && !matchTeamB) return matchTeamA;
+      if (!matchTeamA && matchTeamB) return matchTeamB;
+      if (!matchTeamA && !matchTeamB) return null;
+      return null; // оба есть, победитель не выбран
+    }
+
+    // Заполнить последующие раунды на основе победителей
+    function propagateWinners(rounds) {
+      for (let r = 0; r < rounds.length - 1; r++) {
+        const currentRound = rounds[r];
+        const nextRound = rounds[r+1];
+        for (let i = 0; i < currentRound.length; i+=2) {
+          const match1 = currentRound[i];
+          const match2 = currentRound[i+1];
+          const nextMatchIndex = Math.floor(i/2);
+          if (nextMatchIndex < nextRound.length) {
+            const winner1 = getWinnerForMatch(r, match1.matchIndex, match1.teamA, match1.teamB);
+            const winner2 = getWinnerForMatch(r, match2.matchIndex, match2.teamA, match2.teamB);
+            nextRound[nextMatchIndex].teamA = winner1;
+            nextRound[nextMatchIndex].teamB = winner2;
+          }
+        }
+      }
+    }
+
+    // Отрисовка сетки
+    function renderBracket() {
+      if (!teamNames.length || currentTeamCount === 0) {
+        bracketRoot.innerHTML = '<div style="color:#94a3b8; padding:2rem;">Нет команд для отображения</div>';
+        return;
+      }
+      
+      const rounds = buildBracketStructure(currentTeamCount, teamNames);
+      if (rounds.length === 0) {
+        bracketRoot.innerHTML = '<div style="color:#94a3b8;">Недостаточно команд</div>';
+        return;
+      }
+
+      // Применяем победителей к последующим раундам
+      propagateWinners(rounds);
+
+      // Названия раундов
+      const roundNames = [];
+      const totalRounds = rounds.length;
+      if (totalRounds === 1) roundNames.push("Финал");
+      else if (totalRounds === 2) { roundNames.push("Полуфиналы"); roundNames.push("Финал"); }
+      else if (totalRounds === 3) { roundNames.push("1/4 финала"); roundNames.push("Полуфиналы"); roundNames.push("Финал"); }
+      else if (totalRounds === 4) { roundNames.push("1/8 финала"); roundNames.push("1/4 финала"); roundNames.push("Полуфиналы"); roundNames.push("Финал"); }
+      else if (totalRounds === 5) { roundNames.push("1/16 финала"); roundNames.push("1/8 финала"); roundNames.push("1/4 финала"); roundNames.push("Полуфиналы"); roundNames.push("Финал"); }
+      else {
+        for (let i=0; i<totalRounds-1; i++) roundNames.push(`Раунд ${i+1}`);
+        roundNames.push("Финал");
+      }
+
+      bracketRoot.innerHTML = '';
+      
+      rounds.forEach((round, roundIdx) => {
+        const roundDiv = document.createElement('div');
+        roundDiv.className = 'round';
+        
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'round-title';
+        titleDiv.textContent = roundNames[roundIdx] || `Раунд ${roundIdx+1}`;
+        roundDiv.appendChild(titleDiv);
+
+        round.forEach(match => {
+          const matchDiv = document.createElement('div');
+          matchDiv.className = 'match';
+          matchDiv.dataset.round = roundIdx;
+          matchDiv.dataset.match = match.matchIndex;
+
+          const winnerKey = `${roundIdx}-${match.matchIndex}`;
+          const currentWinner = getWinnerForMatch(roundIdx, match.matchIndex, match.teamA, match.teamB);
+          
+          // Подсветка, если победитель уже выбран
+          if (currentWinner) {
+            matchDiv.classList.add('match-winner');
+          }
+
+          // Команда A
+          const slotA = document.createElement('div');
+          slotA.className = 'team-slot';
+          const nameA = match.teamA || '———';
+          slotA.innerHTML = `<span class="team-name ${!match.teamA ? 'empty-slot' : ''}">${escapeHtml(nameA)}</span>`;
+          if (match.teamA && currentWinner === match.teamA) {
+            slotA.innerHTML += '<span class="winner-badge">Победитель</span>';
+          }
+          if (match.teamA && !currentWinner && match.teamB) {
+            const btnA = document.createElement('button');
+            btnA.className = 'select-winner-btn';
+            btnA.textContent = '👑';
+            btnA.title = 'Выбрать победителем';
+            btnA.onclick = (e) => {
+              e.stopPropagation();
+              setWinner(roundIdx, match.matchIndex, match.teamA);
+            };
+            slotA.appendChild(btnA);
+          } else if (match.teamA && !match.teamB && !currentWinner) {
+            // только одна команда – автоматически победитель (но кнопка не нужна, можно показать)
+            if (!winners.has(winnerKey)) {
+              // автоматически устанавливаем, если ещё нет
+              setWinner(roundIdx, match.matchIndex, match.teamA);
+            }
+          }
+          matchDiv.appendChild(slotA);
+
+          // Команда B
+          const slotB = document.createElement('div');
+          slotB.className = 'team-slot';
+          const nameB = match.teamB || '———';
+          slotB.innerHTML = `<span class="team-name ${!match.teamB ? 'empty-slot' : ''}">${escapeHtml(nameB)}</span>`;
+          if (match.teamB && currentWinner === match.teamB) {
+            slotB.innerHTML += '<span class="winner-badge">Победитель</span>';
+          }
+          if (match.teamB && !currentWinner && match.teamA) {
+            const btnB = document.createElement('button');
+            btnB.className = 'select-winner-btn';
+            btnB.textContent = '👑';
+            btnB.title = 'Выбрать победителем';
+            btnB.onclick = (e) => {
+              e.stopPropagation();
+              setWinner(roundIdx, match.matchIndex, match.teamB);
+            };
+            slotB.appendChild(btnB);
+          } else if (match.teamB && !match.teamA && !currentWinner) {
+            if (!winners.has(winnerKey)) {
+              setWinner(roundIdx, match.matchIndex, match.teamB);
+            }
+          }
+          matchDiv.appendChild(slotB);
+
+          roundDiv.appendChild(matchDiv);
+        });
+
+        bracketRoot.appendChild(roundDiv);
+      });
+    }
+
+    // Экранирование HTML
+    function escapeHtml(text) {
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Установка победителя и перерисовка
+    function setWinner(roundIdx, matchIndex, teamName) {
+      if (!teamName) return;
+      const key = `${roundIdx}-${matchIndex}`;
+      winners.set(key, teamName);
+      
+      // Также нужно очистить всех потомков, зависящих от этого матча (более поздние раунды)
+      // Удаляем ключи для раундов > roundIdx, которые косвенно зависят
+      const keysToDelete = [];
+      for (let [k, v] of winners.entries()) {
+        const [rStr, mStr] = k.split('-');
+        const r = parseInt(rStr, 10);
+        if (r > roundIdx) {
+          // Удаляем все победители в более поздних раундах, т.к. они могли измениться
+          keysToDelete.push(k);
+        }
+      }
+      keysToDelete.forEach(k => winners.delete(k));
+      
+      renderBracket();
+    }
+
+    // Обновление всего: синхронизация, сброс победителей, отрисовка
+    function fullRefresh() {
+      syncTeamNamesToCount(currentTeamCount);
+      resetWinners();
+      renderBracket();
+      updateCountDisplay();
+    }
+
+    // Обработчик изменения количества команд
+    function onTeamCountChange() {
+      const newCount = parseInt(teamCountSelect.value, 10);
+      if (isNaN(newCount) || newCount < 2) return;
+      currentTeamCount = newCount;
+      // Синхронизируем имена (сохраняем существующие, дополняем)
+      syncTeamNamesToCount(currentTeamCount);
+      resetWinners();
+      renderBracket();
+      updateCountDisplay();
+    }
+
+    // Добавление команды (если меньше максимума 30)
+    function addTeam() {
+      if (currentTeamCount >= 30) {
+        alert('Максимальное количество команд — 30.');
+        return;
+      }
+      let name = newTeamNameInput.value.trim();
+      if (name === '') {
+        name = `Команда ${currentTeamCount + 1}`;
+      }
+      // Увеличиваем количество
+      currentTeamCount += 1;
+      teamCountSelect.value = currentTeamCount;
+      // Обновляем teamNames
+      teamNames.push(name);
+      // Сбрасываем победителей, т.к. структура меняется
+      resetWinners();
+      renderBracket();
+      updateCountDisplay();
+      newTeamNameInput.value = '';
+    }
+
+    // Сброс к названиям по умолчанию
+    function resetToDefaultNames() {
+      teamNames = getDefaultTeamNames(currentTeamCount);
+      resetWinners();
+      renderBracket();
+    }
+
+    // Принудительное обновление по кнопке
+    function manualGenerate() {
+      syncTeamNamesToCount(currentTeamCount);
+      resetWinners();
+      renderBracket();
+      updateCountDisplay();
+    }
+
+    // Инициализация при загрузке
+    function initialize() {
+      currentTeamCount = 16;
+      teamCountSelect.value = '16';
+      teamNames = getDefaultTeamNames(16);
+      resetWinners();
+      renderBracket();
+      updateCountDisplay();
+    }
+
+    // Привязка событий
+    teamCountSelect.addEventListener('change', onTeamCountChange);
+    addTeamBtn.addEventListener('click', addTeam);
+    resetDefaultBtn.addEventListener('click', resetToDefaultNames);
+    generateBracketBtn.addEventListener('click', manualGenerate);
+    
+    // Дополнительно: Enter в поле ввода
+    newTeamNameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        addTeam();
+      }
+    });
+
+    // Запуск
+    initialize();
+
+    // Для отладки: возможность редактировать названия? Нет прямого интерфейса, кроме добавления.
+    // Но можно добавить подсказку: названия команд берутся из списка. Чтобы изменить, нужно пересоздать.
+    // Пользователь может сбросить или добавить новые. Это удовлетворяет условиям.
+  })();
+</script>
+</body>
+</html>
