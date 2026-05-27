@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0, viewport-fit=cover">
-  <title>Турнирная сетка · до 30 команд</title>
+  <title>Турнирная сетка · стрелки победителей</title>
   <style>
     * {
       margin: 0;
@@ -24,13 +24,13 @@
     }
 
     .glass-panel {
-      background: rgba(18, 22, 40, 0.7);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      background: rgba(18, 22, 40, 0.75);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
       border-radius: 3rem;
-      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+      box-shadow: 0 35px 55px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255, 255, 255, 0.07);
       padding: 2rem 2rem 2.2rem;
-      max-width: 1400px;
+      max-width: 1450px;
       width: 100%;
       display: flex;
       flex-direction: column;
@@ -66,8 +66,7 @@
       font-size: 1.3rem;
       font-weight: 800;
       -webkit-text-fill-color: #0f172a;
-      background-clip: border-box;
-      box-shadow: 0 8px 20px rgba(251, 191, 36, 0.4);
+      box-shadow: 0 8px 20px rgba(251, 191, 36, 0.5);
     }
 
     .controls-grid {
@@ -156,15 +155,14 @@
       align-items: center;
       gap: 6px;
       transition: all 0.2s;
-      box-shadow: 0 8px 18px rgba(250, 204, 21, 0.25);
+      box-shadow: 0 8px 18px rgba(250, 204, 21, 0.3);
       white-space: nowrap;
-      backdrop-filter: blur(5px);
     }
 
     .btn:hover {
       background: #fbbf24;
       transform: translateY(-2px);
-      box-shadow: 0 12px 24px rgba(250, 204, 21, 0.45);
+      box-shadow: 0 12px 24px rgba(250, 204, 21, 0.5);
     }
 
     .btn-outline {
@@ -184,7 +182,7 @@
       align-items: center;
       gap: 0.6rem;
       margin-top: 0.2rem;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.25);
       border-radius: 2rem;
       padding: 0.8rem 1.2rem;
     }
@@ -237,29 +235,32 @@
     .bracket-container {
       background: rgba(0, 0, 0, 0.25);
       border-radius: 2.5rem;
-      padding: 1.8rem 1rem;
+      padding: 1.8rem 1.5rem;
       overflow-x: auto;
       overflow-y: visible;
       display: flex;
       justify-content: flex-start;
       border: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
     }
 
     .bracket {
       display: flex;
-      gap: 2.2rem;
+      gap: 2.8rem;
       align-items: flex-start;
-      padding: 0.5rem 1rem;
+      padding: 0.8rem 1rem;
       min-width: max-content;
       margin: 0 auto;
+      position: relative;
     }
 
     .round {
       display: flex;
       flex-direction: column;
       justify-content: space-around;
-      gap: 1.3rem;
-      min-width: 175px;
+      gap: 1.4rem;
+      min-width: 180px;
+      position: relative;
     }
 
     .round-title {
@@ -269,7 +270,7 @@
       text-transform: uppercase;
       letter-spacing: 1.2px;
       color: #a5b4cb;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.4rem;
       background: rgba(255, 255, 255, 0.04);
       padding: 0.4rem 0.6rem;
       border-radius: 2rem;
@@ -277,22 +278,23 @@
     }
 
     .match {
-      background: rgba(20, 26, 45, 0.7);
-      backdrop-filter: blur(12px);
-      border-radius: 1.2rem;
+      background: rgba(20, 26, 45, 0.75);
+      backdrop-filter: blur(14px);
+      border-radius: 1.3rem;
       padding: 0.7rem 0.9rem;
       display: flex;
       flex-direction: column;
       gap: 0.4rem;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.2s;
-      box-shadow: 0 10px 20px -8px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      transition: all 0.25s;
+      box-shadow: 0 12px 22px -10px rgba(0,0,0,0.6);
+      position: relative;
     }
 
     .match-winner {
       border: 2px solid #facc15;
-      background: rgba(250, 204, 21, 0.08);
-      box-shadow: 0 0 20px rgba(250, 204, 21, 0.3);
+      background: rgba(250, 204, 21, 0.06);
+      box-shadow: 0 0 25px rgba(250, 204, 21, 0.35);
     }
 
     .team-slot {
@@ -352,6 +354,17 @@
       font-style: italic;
     }
 
+    /* SVG линии соединяют матчи */
+    .connector-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+
     @media (max-width: 750px) {
       .glass-panel {
         padding: 1.5rem;
@@ -396,25 +409,23 @@
     </div>
   </div>
 
-  <!-- Редактируемый список команд -->
   <div class="teams-scroll" id="teamChipsContainer"></div>
 
   <div class="bracket-container" id="bracketContainer">
     <div class="bracket" id="bracketRoot"></div>
   </div>
   <div style="color:#7f8ea3; font-size:0.8rem; text-align:center; margin-top:0.2rem;">
-    💡 Нажмите на значок короны, чтобы выбрать победителя. Изменяйте названия прямо в списке выше.
+    💡 Нажмите 👑 чтобы выбрать победителя. Стрелки показывают путь победителей.
   </div>
 </div>
 
 <script>
   (function() {
     // ---------- СОСТОЯНИЕ ----------
-    let teamNames = [];                // массив строк
+    let teamNames = [];
     let currentTeamCount = 16;
-    let winners = new Map();          // "roundIndex-matchIndex" -> teamName
+    let winners = new Map(); // "roundIndex-matchIndex" -> teamName
 
-    // DOM элементы
     const teamCountSelect = document.getElementById('teamCountSelect');
     const teamCountDisplay = document.getElementById('teamCountDisplay');
     const newTeamNameInput = document.getElementById('newTeamNameInput');
@@ -525,17 +536,116 @@
       return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    // Установка победителя
     function setWinner(roundIdx, matchIdx, teamName) {
       if (!teamName) return;
       const key = `${roundIdx}-${matchIdx}`;
       winners.set(key, teamName);
-      // удаляем все победители в более поздних раундах
       for (let [k] of winners) {
         const [rStr] = k.split('-');
         if (parseInt(rStr, 10) > roundIdx) winners.delete(k);
       }
       renderBracket();
+    }
+
+    // ---------- ОТРИСОВКА СТРЕЛОК (SVG) ----------
+    function drawConnectors() {
+      // Удаляем старый SVG если есть
+      const oldSvg = document.getElementById('connectorSvg');
+      if (oldSvg) oldSvg.remove();
+
+      const bracketEl = document.getElementById('bracketRoot');
+      if (!bracketEl) return;
+      
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.id = 'connectorSvg';
+      svg.classList.add('connector-svg');
+      svg.style.position = 'absolute';
+      svg.style.top = '0';
+      svg.style.left = '0';
+      svg.style.width = '100%';
+      svg.style.height = '100%';
+      svg.style.pointerEvents = 'none';
+      svg.style.zIndex = '10';
+      
+      bracketEl.style.position = 'relative';
+      bracketEl.appendChild(svg);
+
+      const rounds = document.querySelectorAll('.round');
+      if (rounds.length < 2) return;
+
+      // Для каждой пары соседних раундов рисуем линии от матча-источника к целевому матчу
+      for (let r = 0; r < rounds.length - 1; r++) {
+        const currentRound = rounds[r];
+        const nextRound = rounds[r + 1];
+        const currentMatches = currentRound.querySelectorAll('.match');
+        const nextMatches = nextRound.querySelectorAll('.match');
+        
+        if (currentMatches.length === 0 || nextMatches.length === 0) continue;
+
+        // Проходим по матчам текущего раунда парами (i и i+1)
+        for (let i = 0; i < currentMatches.length; i += 2) {
+          const matchA = currentMatches[i];
+          const matchB = currentMatches[i + 1];
+          if (!matchA || !matchB) continue;
+          
+          const targetMatchIndex = Math.floor(i / 2);
+          const targetMatch = nextMatches[targetMatchIndex];
+          if (!targetMatch) continue;
+
+          // Получаем прямоугольники
+          const rectA = matchA.getBoundingClientRect();
+          const rectB = matchB.getBoundingClientRect();
+          const rectTarget = targetMatch.getBoundingClientRect();
+          const containerRect = bracketEl.getBoundingClientRect();
+
+          // Координаты относительно bracketEl
+          const ax = rectA.right - containerRect.left;
+          const ay = rectA.top + rectA.height/2 - containerRect.top;
+          const bx = rectB.right - containerRect.left;
+          const by = rectB.top + rectB.height/2 - containerRect.top;
+          const tx = rectTarget.left - containerRect.left;
+          const ty = rectTarget.top + rectTarget.height/2 - containerRect.top;
+
+          // Рисуем линию от матча A к целевому
+          drawCurvedLine(svg, ax, ay, tx, ty, '#facc15', '0.9');
+          // Рисуем линию от матча B к целевому
+          drawCurvedLine(svg, bx, by, tx, ty, '#facc15', '0.9');
+        }
+      }
+    }
+
+    function drawCurvedLine(svg, x1, y1, x2, y2, color, opacity) {
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      const midX = (x1 + x2) / 2;
+      const d = `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`;
+      path.setAttribute('d', d);
+      path.setAttribute('stroke', color);
+      path.setAttribute('stroke-width', '2.2');
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke-linecap', 'round');
+      path.setAttribute('opacity', opacity);
+      path.setAttribute('stroke-dasharray', '6 4');
+      path.setAttribute('filter', 'drop-shadow(0 0 5px rgba(250,204,21,0.7))');
+      
+      // Добавляем стрелку на конце
+      const arrowId = `arrow-${Date.now()}-${Math.random()}`;
+      const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+      const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+      marker.setAttribute('id', arrowId);
+      marker.setAttribute('markerWidth', '8');
+      marker.setAttribute('markerHeight', '8');
+      marker.setAttribute('refX', '4');
+      marker.setAttribute('refY', '4');
+      marker.setAttribute('orient', 'auto');
+      const arrowPoly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      arrowPoly.setAttribute('points', '0,0 8,4 0,8');
+      arrowPoly.setAttribute('fill', color);
+      marker.appendChild(arrowPoly);
+      defs.appendChild(marker);
+      svg.appendChild(defs);
+      
+      path.setAttribute('marker-end', `url(#${arrowId})`);
+      svg.appendChild(path);
     }
 
     // ---------- РЕНДЕРИНГ СЕТКИ ----------
@@ -603,13 +713,22 @@
         });
         bracketRoot.appendChild(roundDiv);
       });
+
+      // Рисуем соединительные линии после отрисовки DOM
+      setTimeout(drawConnectors, 20);
     }
 
-    // ---------- РЕНДЕРИНГ РЕДАКТИРУЕМЫХ ЧИПСОВ ----------
+    // Обновление при изменении размера окна
+    window.addEventListener('resize', () => {
+      if (bracketRoot.children.length > 0) {
+        drawConnectors();
+      }
+    });
+
+    // ---------- ЧИПСЫ КОМАНД ----------
     function renderTeamChips() {
       teamChipsContainer.innerHTML = '';
       if (!teamNames.length) return;
-
       teamNames.forEach((name, index) => {
         const chip = document.createElement('div');
         chip.className = 'team-chip';
@@ -621,24 +740,21 @@
         teamChipsContainer.appendChild(chip);
       });
 
-      // Обработчики изменения названия
       document.querySelectorAll('.team-name-input').forEach(input => {
         input.addEventListener('input', function(e) {
           const idx = parseInt(this.dataset.index, 10);
           if (!isNaN(idx) && idx < teamNames.length) {
             teamNames[idx] = this.value.trim() === '' ? `Команда ${idx+1}` : this.value.trim();
-            // автоматически перерисовываем сетку при изменении имени
             renderBracket();
           }
         });
       });
 
-      // Удаление команды
       document.querySelectorAll('.delete-team-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
           const idx = parseInt(this.dataset.index, 10);
           if (isNaN(idx) || teamNames.length <= 2) {
-            alert("Минимум 2 команды необходимо.");
+            alert("Минимум 2 команды.");
             return;
           }
           teamNames.splice(idx, 1);
@@ -653,7 +769,6 @@
       });
     }
 
-    // ---------- ОБЩИЕ ОБНОВЛЕНИЯ ----------
     function fullRefresh() {
       syncTeamNamesToCount(currentTeamCount);
       resetWinners();
@@ -697,7 +812,6 @@
       renderBracket();
     }
 
-    // ---------- ИНИЦИАЛИЗАЦИЯ ----------
     function initialize() {
       currentTeamCount = 16;
       teamCountSelect.value = '16';
